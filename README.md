@@ -108,7 +108,7 @@ OPFS's highest-performance synchronous API (`FileSystemSyncAccessHandle`) is **o
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/sqlite-in-browser
+git clone https://github.com/didof/sqlite-in-browser
 cd sqlite-in-browser
 
 # Install dependencies
@@ -149,7 +149,7 @@ Cross-Origin-Embedder-Policy: require-corp
 
 This boilerplate configures them automatically in `vite.config.ts` for local development.
 
-**For production deployments**, you must configure these headers at your server or CDN level:
+**For production deployments on platforms that support custom headers**, configure them at your server or CDN level:
 
 | Platform             | How                                      |
 | -------------------- | ---------------------------------------- |
@@ -162,11 +162,38 @@ This boilerplate configures them automatically in `vite.config.ts` for local dev
 Example `_headers` for Cloudflare Pages / Netlify:
 
 ```
-Cross-Origin-Opener-Policy: same-origin
-Cross-Origin-Embedder-Policy: require-corp
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
 ```
 
 > **Important:** If these headers are missing, SQLite WASM will fall back to a slower, non-persistent in-memory mode, or fail entirely. Check the browser console for warnings.
+
+### 🐙 GitHub Pages: the `coi-serviceworker` workaround
+
+GitHub Pages **does not support custom HTTP headers**. You cannot set COOP/COEP there at the infrastructure level. This is a hard platform limitation.
+
+The solution is [`coi-serviceworker`](https://github.com/gzuidhof/coi-serviceworker) — a tiny service worker that intercepts every fetch response and injects the required headers on the client side.
+
+**How it works:**
+
+1. On first page load, the script registers the service worker and immediately reloads the page.
+2. On the second load (controlled by the SW), every response is intercepted and the headers are added:
+   - `Cross-Origin-Embedder-Policy: require-corp`
+   - `Cross-Origin-Opener-Policy: same-origin`
+3. `window.crossOriginIsolated` becomes `true` → OPFS and `SharedArrayBuffer` are now available.
+
+This boilerplate ships `public/coi-serviceworker.js` and loads it as the **first script in `<head>`** — before any module scripts — so the reload happens before any application code runs:
+
+```html
+<head>
+  <!-- Must be first: triggers a reload into a cross-origin isolated context -->
+  <script src="coi-serviceworker.js"></script>
+  ...
+</head>
+```
+
+> **Note:** On local dev, the Vite server headers handle isolation directly. The service worker detects `window.crossOriginIsolated === true` and skips registration, so there is no double-reload in development.
 
 ---
 
@@ -174,15 +201,17 @@ Cross-Origin-Embedder-Policy: require-corp
 
 ```
 sqlite-in-browser/
-├── index.html          # Semantic HTML entry point
-├── vite.config.ts      # Vite config with COOP/COEP headers
-├── tsconfig.json       # Strict TypeScript config
+├── index.html              # Semantic HTML entry point
+├── vite.config.ts          # Vite config with COOP/COEP headers
+├── tsconfig.json           # Strict TypeScript config
 ├── package.json
+├── public/
+│   └── coi-serviceworker.js  # Service worker for GitHub Pages (see below)
 └── src/
-    ├── worker.ts       # SQLite WASM database engine (Web Worker)
-    ├── db.ts           # Comlink-wrapped async DB API (main thread)
-    ├── main.ts         # UI logic & DOM manipulation
-    └── style.css       # Vanilla CSS design system
+    ├── worker.ts           # SQLite WASM database engine (Web Worker)
+    ├── db.ts               # Comlink-wrapped async DB API (main thread)
+    ├── main.ts             # UI logic & DOM manipulation
+    └── style.css           # Vanilla CSS design system
 ```
 
 ---
@@ -230,4 +259,24 @@ useEffect(() => {
 
 ## 📄 License
 
-MIT © Your Name
+MIT License
+
+Copyright (c) 2026 didof
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

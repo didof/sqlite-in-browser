@@ -1,0 +1,30 @@
+{
+  "name": "sqlite-in-browser",
+  "version": "1.0.0",
+  "description": "Local-first SQLite WASM + OPFS boilerplate — sub-millisecond queries, zero server, framework-agnostic.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "sqlite",
+    "wasm",
+    "opfs",
+    "local-first",
+    "vite",
+    "typescript",
+    "comlink"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@sqlite.org/sqlite-wasm": "^3.49.0-build1",
+    "comlink": "^4.4.2",
+    "vite": "^6.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}

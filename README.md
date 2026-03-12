@@ -162,9 +162,8 @@ This boilerplate configures them automatically in `vite.config.ts` for local dev
 Example `_headers` for Cloudflare Pages / Netlify:
 
 ```
-/*
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
 ```
 
 > **Important:** If these headers are missing, SQLite WASM will fall back to a slower, non-persistent in-memory mode, or fail entirely. Check the browser console for warnings.

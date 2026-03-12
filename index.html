@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A Local-First SQLite in the browser boilerplate using Vite, Vanilla TypeScript, and OPFS. Experience true sub-millisecond query latency."
+    />
+    <title>SQLite in Browser — Local-First Boilerplate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div class="bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <main class="container">
+      <header class="header">
+        <div class="badge">🔒 100% Local — Zero Server</div>
+        <h1>SQLite in the Browser</h1>
+        <p class="subtitle">
+          A <strong>local-first</strong> boilerplate powered by SQLite WASM +
+          OPFS. Data persists on-device. Queries run in microseconds.
+        </p>
+        <div class="tech-stack">
+          <span class="tech-pill">Vite</span>
+          <span class="tech-pill">Vanilla TS</span>
+          <span class="tech-pill">SQLite WASM</span>
+          <span class="tech-pill">OPFS</span>
+          <span class="tech-pill">Comlink</span>
+        </div>
+      </header>
+
+      <section class="card" id="app-card">
+        <div
+          id="status-banner"
+          class="status-banner status-loading"
+          role="status"
+          aria-live="polite"
+        >
+          <span class="status-dot"></span>
+          <span id="status-text">Initializing SQLite WASM &amp; OPFS…</span>
+        </div>
+
+        <form
+          id="task-form"
+          class="task-form hidden"
+          aria-label="Add a new task"
+        >
+          <div class="input-group">
+            <label for="task-input" class="sr-only">New task</label>
+            <input
+              type="text"
+              id="task-input"
+              placeholder="Type a task and press Enter…"
+              autocomplete="off"
+              maxlength="200"
+              required
+            />
+            <button type="submit" id="add-btn" aria-label="Add task">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add
+            </button>
+          </div>
+        </form>
+
+        <div class="list-header hidden" id="list-header">
+          <span class="list-title">Tasks</span>
+          <span id="task-count" class="task-count">0 tasks</span>
+        </div>
+
+        <ul
+          id="task-list"
+          class="task-list"
+          aria-label="Task list"
+          aria-live="polite"
+        ></ul>
+
+        <div id="empty-state" class="empty-state hidden">
+          <div class="empty-icon">📋</div>
+          <p>No tasks yet. Add one above!</p>
+        </div>
+
+        <footer class="perf-footer hidden" id="perf-footer">
+          <span class="perf-label">Last query:</span>
+          <span id="perf-time" class="perf-time">—</span>
+          <span class="perf-hint"
+            >Open DevTools console for full timing logs</span
+          >
+        </footer>
+      </section>
+
+      <section class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">⚡</div>
+          <h2>Sub-millisecond reads</h2>
+          <p>
+            SQLite runs entirely inside a Web Worker via WASM. All I/O is
+            synchronous on OPFS — the fastest storage primitive available in
+            browsers.
+          </p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">💾</div>
+          <h2>Persistent, private storage</h2>
+          <p>
+            OPFS stores data directly on-device. It survives page reloads and
+            works offline. Your data never leaves the browser.
+          </p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🧩</div>
+          <h2>Framework-agnostic primitive</h2>
+          <p>
+            Import <code>src/db.ts</code> into any modern stack — React, Vue,
+            Svelte, Astro — and you're done.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

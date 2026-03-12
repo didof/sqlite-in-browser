@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Cross-Origin Isolation via service worker (required for OPFS + SharedArrayBuffer).
+         Must be the first script so it can trigger a reload before any module code runs.
+         On local dev the Vite server headers handle this instead. -->
+    <script src="coi-serviceworker.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
